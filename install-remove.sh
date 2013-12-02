@@ -172,8 +172,7 @@ f_remove() {
 	echo "Removing files ..."
 
 	if [ -f /etc/omv-sensor.conf ]; then
-		echo "Remove omv-sensor.conf? (y/n)"
-		read -n 1 OMV_SENSOR_REMOVE
+		read -p "Remove omv-sensor.conf? (y/n): " OMV_SENSOR_REMOVE
 		case $OMV_SENSOR_REMOVE in
 			y|Y)
 				echo ""
