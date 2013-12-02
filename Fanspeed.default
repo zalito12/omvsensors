@@ -4,22 +4,15 @@
 // require("js/omv/PluginManager.js")
 // require("js/omv/workspace/panel/RrdGraph.js")
 
-Ext.ns("OMV.Module.Diagnostics.SysInfo");
+Ext.define("OMV.module.admin.diagnostic.system.plugin.Fanspeed", {
+        extend: "OMV.workspace.panel.RrdGraph",
 
-/**
- * @class OMV.Module.Diagnostics.SysInfo.Temperatures
- * @derived Ext.TabPanel
- */
-
-OMV.Module.Diagnostics.SysInfo.Temperature = function(config) {
-	var initialConfig = {
-		title: "Fanspeed",
-		rrdGraphName: "fanspeed"
-	};
-	Ext.apply(initialConfig, config);
-	OMV.Module.Diagnostics.SysInfo.Temperature.superclass.constructor.call(
-		this, initialConfig);
-};
-Ext.extend(OMV.Module.Diagnostics.SysInfo.Temperature, OMV.RrdGraphPanel, {
+        rrdGraphName: "fanspeed"
 });
-OMV.preg("sysinfo", "system", OMV.Module.Diagnostics.SysInfo.Temperature); 
+
+OMV.PluginManager.register({
+        ptype: "diagnostic",
+        id: "system",
+        text: _("Fanspeed"),
+        className: "OMV.module.admin.diagnostic.system.plugin.Fanspeed"
+});
