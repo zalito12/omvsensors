@@ -3,11 +3,11 @@
 #
 #          FILE:  sensors
 #				  bash-script for Openmediavault
-# 
+#
 #         USAGE:  install it with install.sh
-# 
+#
 #   DESCRIPTION:  it creates
-# 
+#
 #        AUTHOR:  Solo0815, thx to all Users of the OMV-Forums,
 #                 who added sample rrd-scripts
 #                 feel free to edit this file, but please share it in
@@ -26,7 +26,8 @@ set -e
 
 OMV_COLLECTD_CONFIG=${OMV_COLLECTD_CONFIG:-"/etc/collectd/collectd.conf"}
 OMV_COLLECTD_RRDTOOL_MKGRAPH=${OMV_COLLECTD_RRDTOOL_MKGRAPH:-"/usr/sbin/omv-mkgraph"}
-OMV_JSFILE_CONFIGDIR="/var/www/openmediavault/js/omv/module/admin"
+#Mahmoud <mahmud1@hotmail.com> Oct 2013: Following line fixed to meet OMV 0.5
+OMV_JSFILE_CONFIGDIR="/var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin"
 
 # simple log-function
 _log() {
@@ -72,6 +73,21 @@ COLOR_FANSPEED="#00cc00" # green
 
 EOF
 }
+
+# hedader for fanspeed section in /usr/sbin/omv-mkgraph
+f_plugin_hddtemp_header() {
+cat <<EOF >> ${OMV_COLLECTD_RRDTOOL_MKGRAPH}
+# Plugin: hddtemp
+TITLE_HDD="Hard Drive Temperature"
+COLOR_HDD1="#0000FD" # BLUE
+COLOR_HDD2="#FF0000" # RED
+COLOR_HDD3="#00CC00" # GREEN
+COLOR_HDD4="#00FFFF" # CYAN
+COLOR_HDD5="#FF00FF" # PINK
+
+EOF
+}
+
 
 # rrdtool script for fanspeed
 f_fanspeedrrd() {
@@ -284,6 +300,55 @@ COMMENT:"\${LASTUPDATE}" >/dev/null
 EOF
 }
 
+# rrdtool script for HDD tempteratures
+f_hdd_sensorsrrd() {
+
+
+NUM_HDD=5
+
+RDD_DEF=""
+RDD_LINE=""
+for i in $(seq 1 $NUM_HDD)
+do
+	eval RDD_DEF+="DEF:hdd${i}avg=\\\${DATA}/\${HDD${i}}:value:AVERAGE\ "
+	eval RDD_DEF+="DEF:hdd${i}min=\\\${DATA}/\${HDD${i}}:value:MIN\ "
+	eval RDD_DEF+="DEF:hdd${i}max=\\\${DATA}/\${HDD${i}}:value:MAX\ "
+done
+
+for i in $(seq 1 $NUM_HDD)
+do
+	RDD_LINE+="LINE1:hdd${i}avg\${COLOR_HDD${i}}:\"HDD ${i}\" "
+	RDD_LINE+="GPRINT:hdd${i}min:MIN:\"%4.2lf Min\" "
+	RDD_LINE+="GPRINT:hdd${i}avg:AVERAGE:\"%4.2lf Avg\" "
+	RDD_LINE+="GPRINT:hdd${i}max:MAX:\"%4.2lf Max\" "
+	RDD_LINE+="GPRINT:hdd${i}avg:LAST:\"%4.2lf Last\l\" "
+done
+
+cat <<EOF >> ${OMV_COLLECTD_RRDTOOL_MKGRAPH}
+rrdtool graph \${IMGDIR}/hddtemp-hour.png --start \${HOURSTART} \${DEFAULTS} --title "\${TITLE_HDD}\${HOURTITLE}" --slope-mode --upper-limit 80 --lower-limit 0 --units-exponent 0 \
+$RDD_DEF \
+$RDD_LINE \
+COMMENT:"\${LASTUPDATE}" >/dev/null
+rrdtool graph \${IMGDIR}/hddtemp-day.png --start \${DAYSTART} \${DEFAULTS} --title "\${TITLE_HDD}\${DAYTITLE}" --slope-mode --upper-limit 80 --lower-limit 0 --units-exponent 0 \
+$RDD_DEF \
+$RDD_LINE \
+COMMENT:"\${LASTUPDATE}" >/dev/null
+rrdtool graph \${IMGDIR}/hddtemp-week.png --start \${WEEKSTART} \${DEFAULTS} --title "\${TITLE_HDD}\${WEEKTITLE}" --slope-mode --upper-limit 80 --lower-limit 0 --units-exponent 0 \
+$RDD_DEF \
+$RDD_LINE \
+COMMENT:"\${LASTUPDATE}" >/dev/null
+rrdtool graph \${IMGDIR}/hddtemp-month.png --start \${MONTHSTART} \${DEFAULTS} --title "\${TITLE_HDD}\${MONTHTITLE}" --slope-mode --upper-limit 80 --lower-limit 0 --units-exponent 0 \
+$RDD_DEF \
+$RDD_LINE \
+COMMENT:"\${LASTUPDATE}" >/dev/null
+rrdtool graph \${IMGDIR}/hddtemp-year.png --start \${YEARSTART} \${DEFAULTS} --title "\${TITLE_HDD}\${YEARTITLE}" --slope-mode --upper-limit 80 --lower-limit 0 --units-exponent 0 \
+$RDD_DEF \
+$RDD_LINE \
+COMMENT:"\${LASTUPDATE}" >/dev/null
+
+EOF
+}
+
 ######################################################################
 # Main body of script
 ######################################################################
@@ -419,6 +484,9 @@ case $pluginconf in
 		exit 1
 		;;
 esac
+
+f_plugin_hddtemp_header
+f_hdd_sensorsrrd
 
 f_end_section
 exit 0
