@@ -84,6 +84,7 @@ COLOR_HDD2="#FF0000" # RED
 COLOR_HDD3="#00CC00" # GREEN
 COLOR_HDD4="#00FFFF" # CYAN
 COLOR_HDD5="#FF00FF" # PINK
+COLOR_HDD6="#FFFF00" # YELLOW
 
 EOF
 }
@@ -513,6 +514,7 @@ if (( "$NUM_HDD" > 0 )); then
 			}
 		fi
 	done
+	cp "$OMV_JSFILE_CONFIGDIR/HDDTemp.default" "$OMV_JSFILE_CONFIGDIR/HDDTemp.js"
 
 	f_plugin_hddtemp_header
 	f_hdd_sensorsrrd
