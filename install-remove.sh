@@ -29,7 +29,7 @@ f_checksuccess() {
 # Install all the files to OMV - omv-sensors.conf can be chosen to overwrite or keep
 f_install() {
 	echo "Do you have lm-sensors already installed and configured? (y/n) "
-	read -n 1 LM_SENSORS
+	read -p 1 LM_SENSORS
 
 	case $LM_SENSORS in
 		y|Y)
@@ -94,7 +94,7 @@ f_install() {
 
 	# new:
 	echo "Should this install-script make the changes for the first-time-setup? (y/n) "
-	read -n 1 CONFIRM
+	read -p 1 CONFIRM
 
 	case $CONFIRM in
 		y|Y)
@@ -106,14 +106,15 @@ f_install() {
 			f_checksuccess
 
 			echo "If you have errors here, it's due to missing rrd-files. You have to edit your /etc/omv-sensor.conf"
-			echo -n "restarting collectd ..."
+			echo "restarting collectd..."
 			/etc/init.d/collectd restart
 			f_checksuccess
 
-			echo -n "creating graphs ..."
+			echo -n "creating graphs..."
 			/usr/sbin/omv-mkgraph
 			f_checksuccess
 
+			echo ""
 			echo "Installation completed!"
 			echo "Edit /etc/omv-sensor.conf to fit your needs and run"
 			echo "'/usr/share/openmediavault/mkconf/collectd.d/sensors'"
@@ -152,7 +153,7 @@ EOF
 # Remove all the files from OMV - omv-sensors.conf can be chosen to remove or keep
 f_remove() {
 	echo "Do you want to remove all files from the sensors-script? (y/n) "
-	read -n 1 LM_SENSORS_REMOVE
+	read -p 1 LM_SENSORS_REMOVE
 
 	case $LM_SENSORS_REMOVE in
 		y|Y)
