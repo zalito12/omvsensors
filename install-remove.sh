@@ -28,8 +28,7 @@ f_checksuccess() {
 
 # Install all the files to OMV - omv-sensors.conf can be chosen to overwrite or keep
 f_install() {
-	echo "Do you have lm-sensors already installed and configured? (y/n) "
-	read -p LM_SENSORS
+	read -p LM_SENSORS "Do you have lm-sensors already installed and configured? (y/n): "
 
 	case $LM_SENSORS in
 		y|Y)
@@ -93,8 +92,7 @@ f_install() {
 	f_checksuccess
 
 	# new:
-	echo "Should this install-script make the changes for the first-time-setup? (y/n) "
-	read -p CONFIRM
+	read -p CONFIRM "Should this install-script make the changes for the first-time-setup? (y/n): "
 
 	case $CONFIRM in
 		y|Y)
@@ -152,8 +150,7 @@ EOF
 
 # Remove all the files from OMV - omv-sensors.conf can be chosen to remove or keep
 f_remove() {
-	echo "Do you want to remove all files from the sensors-script? (y/n) "
-	read -p LM_SENSORS_REMOVE
+	read -p LM_SENSORS_REMOVE "Do you want to remove all files from the sensors-script? (y/n): "
 
 	case $LM_SENSORS_REMOVE in
 		y|Y)
