@@ -20,9 +20,9 @@ NC='\033[0m'        # No Color
 #checks, if the command was successfull
 f_checksuccess() {
 	if [ $? -ne 0 ] ; then # Last Action returns an error $1=1
-		echo "${RED}failed!$NC" ; sleep 1
+		echo -e "${RED}failed!$NC" ; sleep 1
 	else # if successfull $1=0
-		echo "${GREEN}successfull!$NC" ; sleep 1
+		echo -e "${GREEN}successfull!$NC" ; sleep 1
 	fi
 }
 
