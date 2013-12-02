@@ -33,14 +33,17 @@ f_install() {
 
 	case $LM_SENSORS in
 		y|Y)
+			echo ""
 			;;
 		n|N)
+			echo ""
 			echo "You have to install and configure lm-sensors first"
 			echo "Then you can rerun this script"
 			echo "Exiting ..."
 			exit 0
 			;;
 		*)
+			echo ""
 			echo "Please use y/n! Exiting ..."
 			exit 0
 			;;
@@ -95,6 +98,7 @@ f_install() {
 
 	case $CONFIRM in
 		y|Y)
+			echo ""
 			echo "Making changes ..."
 			sleep 1
 			echo "running '/usr/share/openmediavault/mkconf/collectd.d/sensors' ... "
@@ -119,6 +123,7 @@ f_install() {
 			echo "Have fun!"
 			;;
 		n|N)
+			echo ""
 			echo "You have to make the changes by yourself"
 			cat <<EOF
 Please install and configure lm-sensors (if not already done)
@@ -152,13 +157,16 @@ f_remove() {
 
 	case $LM_SENSORS_REMOVE in
 		y|Y)
+			echo ""
 			;;
 		n|N)
+			echo ""
 			echo "Nothing to do"
 			echo "Exiting ..."
 			exit 0
 			;;
 		*)
+			echo ""
 			echo "Please use y/n! Exiting ..."
 			exit 0
 			;;
@@ -171,14 +179,17 @@ f_remove() {
 		read -n 1 OMV_SENSOR_REMOVE
 		case $OMV_SENSOR_REMOVE in
 			y|Y)
+				echo ""
 				echo "removing omv-sensor.conf ... "
 				rm /etc/omv-sensor.conf > /dev/null 2>&1
 				f_checksuccess
 				;;
 			n|N)
+				echo ""
 				echo "omv-sensor.conf is not removed"
 				;;
 			*)
+				echo ""
 				echo "Please use y/n!"
 				echo "omv-sensor.conf is not removed"
 				;;
