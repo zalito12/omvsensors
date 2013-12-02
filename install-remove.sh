@@ -3,11 +3,11 @@
 # Install/Remove script for OMV-sensors script
 # Use it with OMV
 
-# Author: Solo0815
+# Author: Solo0815, fergbrain <andrew@fergcorp.com>
 # feel free to edit this file, but please share it in
 # the OMV-Forum: http://forums.openmediavault.org/viewtopic.php?f=13&t=79#p244
 
-# Version 0.5
+# Version 0.6
 
 ##### Shell-Colors
 GREEN="\033[0;32m"
@@ -78,8 +78,8 @@ f_install() {
 		f_checksuccess
 	fi
 
-	echo -ne "\nsensors >>> /usr/share/openmediavault/scripts/collectd.d/ ... "
-	cp sensors /usr/share/openmediavault/scripts/collectd.d/ > /dev/null 2>&1
+	echo -ne "\nsensors >>> /usr/share/openmediavault/mkconf/collectd.d/ ... "
+	cp sensors /usr/share/openmediavault/mkconf/collectd.d/ > /dev/null 2>&1
 	f_checksuccess
 
 	echo -ne "Sensors.default >>> /var/www/openmediavault/js/omv/module/admin ... "
@@ -90,6 +90,10 @@ f_install() {
 	cp Fanspeed.default /var/www/openmediavault/js/omv/module/admin > /dev/null 2>&1
 	f_checksuccess
 
+	echo -ne "HDDTemp.default /var/www/openmediavault/js/omv/module/admin ... "
+	cp HDDTemp.default /var/www/openmediavault/js/omv/module/admin > /dev/null 2>&1
+	f_checksuccess
+
 	# new:
 	echo -ne "\nShould this install-script make the changes for the first-time-setup? (y/n) "
 	read -n 1 CONFIRM
@@ -98,9 +102,9 @@ f_install() {
 		y|Y)
 			echo -e "\n\nMaking changes ..."
 			sleep 1
-			echo -e "\nrunning '/usr/share/openmediavault/scripts/collectd.d/sensors' ... "
+			echo -e "\nrunning '/usr/share/openmediavault/mkconf/collectd.d/sensors' ... "
 			echo
-			/usr/share/openmediavault/scripts/collectd.d/sensors
+			/usr/share/openmediavault/mkconf/collectd.d/sensors
 			f_checksuccess
 
 			echo -e "\nIf you have errors here, it's due to missing rrd-files. You have to edit your /etc/omv-sensor.conf"
@@ -114,7 +118,7 @@ f_install() {
 
 			echo -e "Installation completed!"
 			echo -e "\nEdit /etc/omv-sensor.conf to fit your needs and run"
-			echo "'/usr/share/openmediavault/scripts/collectd.d/sensors'"
+			echo "'/usr/share/openmediavault/mkconf/collectd.d/sensors'"
 			echo -e "to create the rrd-scripts for OMV.\n"
 			echo -e "After install, you can delete the omvsensors-master folder\n"
 			echo "Have fun!"
@@ -125,11 +129,11 @@ f_install() {
 Please install and configure lm-sensors (if not already done)
 
 Edit /etc/omv-sensor.conf to fit your needs
-and run '/usr/share/openmediavault/scripts/collectd.d/sensors'
+and run '/usr/share/openmediavault/mkconf/collectd.d/sensors'
 to create the rrd-scripts for OMV.
 
 After that, please run '/etc/init.d/collectd restart'
-to collect the values for your coretemp/fanspeed. You can run 
+to collect the values for your coretemp/fanspeed/HDDTemp. You can run 
 'omv-mkgraph' to create the graphs.
 
 After install, you can delete this folder
@@ -188,39 +192,53 @@ f_remove() {
 		echo -ne "\n\nomv-sensor.conf not found"
 	fi
 
-	if [ -f /usr/share/openmediavault/scripts/collectd.d/sensors ]; then
-		echo -ne "\nremoving /usr/share/openmediavault/scripts/collectd.d/sensors ... "
-		rm /usr/share/openmediavault/scripts/collectd.d/sensors > /dev/null 2>&1
+	if [ -f /usr/share/openmediavault/mkconf/collectd.d/sensors ]; then
+		echo -ne "\nremoving /usr/share/openmediavault/mkconf/collectd.d/sensors ... "
+		rm /usr/share/openmediavault/mkconf/collectd.d/sensors > /dev/null 2>&1
 		f_checksuccess
 	else
-		echo -ne "\n/usr/share/openmediavault/scripts/collectd.d/sensors not found!"
+		echo -ne "\n/usr/share/openmediavault/mkconf/collectd.d/sensors not found!"
 	fi
 
-	if [ -f /var/www/openmediavault/js/omv/module/admin/Sensors.default ]; then
-		echo -ne "removing /var/www/openmediavault/js/omv/module/admin/Sensors.default ... "
-		rm  /var/www/openmediavault/js/omv/module/admin/Sensors.default > /dev/null 2>&1
+	if [ -f /var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/Sensors.default ]; then
+		echo -ne "removing /var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/Sensors.default ... "
+		rm  /var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/Sensors.default > /dev/null 2>&1
 		f_checksuccess
 	else
-		echo -ne "\n/var/www/openmediavault/js/omv/module/admin/Sensors.default not found!"
+		echo -ne "\n/var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/Sensors.default not found!"
 	fi
 
-	if [ -f /var/www/openmediavault/js/omv/module/admin/Fanspeed.default ]; then
-		echo -ne "removing /var/www/openmediavault/js/omv/module/admin/Fanspeed.default ... "
-		rm  /var/www/openmediavault/js/omv/module/admin/Fanspeed.default > /dev/null 2>&1
+	if [ -f /var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/Fanspeed.default ]; then
+		echo -ne "removing /var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/Fanspeed.default ... "
+		rm  /var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/Fanspeed.default > /dev/null 2>&1
 		f_checksuccess
 	else
-		echo -ne "\n/var/www/openmediavault/js/omv/module/admin/Fanspeed.default not found!"
+		echo -ne "\n/var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/Fanspeed.default not found!"
+	fi
+
+	if [ -f /var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/HDDTemp.default ]; then
+		echo -ne "removing /var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/HDDTemp.default ... "
+		rm  /var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/HDDTemp.default > /dev/null 2>&1
+		f_checksuccess
+	else
+		echo -ne "\n/var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/HDDTemp.default not found!"
 	fi
 	
-	if [ -f /var/www/openmediavault/js/omv/module/admin/Fanspeed.js ]; then
-		echo -ne "removing /var/www/openmediavault/js/omv/module/admin/Fanspeed.js ... "
-		rm  /var/www/openmediavault/js/omv/module/admin/Fanspeed.js > /dev/null 2>&1
+	if [ -f /var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/Fanspeed.js ]; then
+		echo -ne "removing /var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/Fanspeed.js ... "
+		rm  /var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/Fanspeed.js > /dev/null 2>&1
+		f_checksuccess
+	fi
+			
+	if [ -f /var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/Sensors.js ]; then
+		echo -ne "removing /var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/Sensors.js ... "
+		rm  /var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/Sensors.js > /dev/null 2>&1
 		f_checksuccess
 	fi
 
-	if [ -f /var/www/openmediavault/js/omv/module/admin/Sensors.js ]; then
-		echo -ne "removing /var/www/openmediavault/js/omv/module/admin/Sensors.js ... "
-		rm  /var/www/openmediavault/js/omv/module/admin/Sensors.js > /dev/null 2>&1
+	if [ -f /var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/HDDTemp.js ]; then
+		echo -ne "removing /var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/HDDTemp.js ... "
+		rm  /var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/HDDTemp.js > /dev/null 2>&1
 		f_checksuccess
 	fi
 

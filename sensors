@@ -303,9 +303,6 @@ EOF
 # rrdtool script for HDD tempteratures
 f_hdd_sensorsrrd() {
 
-
-NUM_HDD=5
-
 RDD_DEF=""
 RDD_LINE=""
 for i in $(seq 1 $NUM_HDD)
@@ -360,7 +357,13 @@ fi
 if [ -f "$OMV_JSFILE_CONFIGDIR/Sensors.js" ]; then
 	rm "$OMV_JSFILE_CONFIGDIR/Sensors.js" > /dev/null 2>&1
 fi
+if [ -f "$OMV_JSFILE_CONFIGDIR/HDDTemp.js" ]; then
+	rm "$OMV_JSFILE_CONFIGDIR/HDDTemp.js" > /dev/null 2>&1
+fi
+
 sed -i /LoadPlugin\ sensors/d ${OMV_COLLECTD_CONFIG} 2> /dev/null
+
+sed -i /LoadPlugin\ hddtemp/d ${OMV_COLLECTD_CONFIG} 2> /dev/null
 
 # LoadPlugin fanspeed is already part of collectd - if it exists -> remove it!
 sed -i /LoadPlugin\ fanspeed/d ${OMV_COLLECTD_CONFIG} 2> /dev/null
@@ -384,6 +387,10 @@ fi
 # Add "LoadPlugin sensors" to /etc/collectd/collectd.conf
 if ! egrep "^LoadPlugin sensors" ${OMV_COLLECTD_CONFIG} 2> /dev/null; then
 	echo -e "LoadPlugin sensors\n" >> ${OMV_COLLECTD_CONFIG}
+fi
+
+if ! egrep "^LoadPlugin hddtemp" ${OMV_COLLECTD_CONFIG} 2> /dev/null; then
+	echo -e "LoadPlugin hddtemp\n" >> ${OMV_COLLECTD_CONFIG}
 fi
 
 # Checking config
@@ -485,8 +492,31 @@ case $pluginconf in
 		;;
 esac
 
-f_plugin_hddtemp_header
-f_hdd_sensorsrrd
+# Checking hddtemp config
+[[ "$NUM_HDD" =~ ^([\d]+)$ ]] || {
+			_log "WARN: Invalid parameter format: NUM_HDD"
+			_log "WARN: You set it to '$NUM_HDD', which is not a correct syntax. Only digits are allowed."
+			_log "WARN: Setting NUM_HDD to 0."
+			NUM_HDD="0";
+		}
+if (( "$NUM_HDD" > 0 )) {
+	for i in $(seq 1 $NUM_HDD); do
+		eval HDD_SENSOR="\${HDD${i}}"
+		if [ ! -z "$HDD_SENSOR_NAME" ]; then
+			[[ -f /var/lib/collectd/rrd/localhost/$HDD_SENSOR ]] || {
+				_log "WARN: given rrd-file in /var/lib/collectd/rrd/localhost for HDD${i} does not exist"
+				eval _log "WARN: You set it to \${HDD${i}}"
+				_log "WARN: Pleast check your config-file"
+				_log "WARN: exiting script ..."
+				f_end_section
+			exit 1
+			}
+		fi
+	done
+
+	f_plugin_hddtemp_header
+	f_hdd_sensorsrrd
+}
 
 f_end_section
 exit 0
