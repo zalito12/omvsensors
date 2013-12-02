@@ -83,15 +83,15 @@ f_install() {
 	f_checksuccess
 
 	echo -ne "Sensors.default >>> /var/www/openmediavault/js/omv/module/admin ... "
-	cp Sensors.default /var/www/openmediavault/js/omv/module/admin > /dev/null 2>&1
+	cp Sensors.default /var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/ > /dev/null 2>&1
 	f_checksuccess
 
 	echo -ne "Fanspeed.default /var/www/openmediavault/js/omv/module/admin ... "
-	cp Fanspeed.default /var/www/openmediavault/js/omv/module/admin > /dev/null 2>&1
+	cp Fanspeed.default /var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/ > /dev/null 2>&1
 	f_checksuccess
 
 	echo -ne "HDDTemp.default /var/www/openmediavault/js/omv/module/admin ... "
-	cp HDDTemp.default /var/www/openmediavault/js/omv/module/admin > /dev/null 2>&1
+	cp HDDTemp.default /var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/ > /dev/null 2>&1
 	f_checksuccess
 
 	# new:
