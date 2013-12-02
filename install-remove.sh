@@ -35,45 +35,40 @@ f_install() {
 		y|Y)
 			;;
 		n|N)
-			echo -e "\n\nYou have to install and configure lm-sensors first"
+			echo "You have to install and configure lm-sensors first"
 			echo "Then you can rerun this script"
 			echo "Exiting ..."
 			exit 0
 			;;
 		*)
-			echo "\n\nPlease use y/n! Exiting ..."
+			echo "Please use y/n! Exiting ..."
 			exit 0
 			;;
 	esac
 
 	sleep 1
-	echo -e "\n\nInstalling files ..."
+	echo "Installing files..."
 
 	if [ -f /etc/omv-sensor.conf ]; then
-		echo -e "\nomv-sensor.conf exists - What to do?\n"
-		echo "1 - install the default version - then all your changes in this file are gone"
-		echo "2 - keep the current version"
-		echo -n "-> "
-		read -n 1 OMV_SENSOROVERWRITE
-		case $OMV_SENSOROVERWRITE in
-			1)
-				echo -ne "\n\nmaking backup of omv-sensor.conf ... "
-				cp /etc/omv-sensor.conf /etc/omv-sensor.conf_bak  > /dev/null 2>&1
-				f_checksuccess
-				echo -ne "omv-sensor.conf >>> /etc ... "
-				cp omv-sensor.conf /etc > /dev/null 2>&1
-				f_checksuccess
-				;;
-			2)
-				echo -e "\n\nomv-sensor.conf is not updated"
-				;;
-			*)
-				echo "\n\nPlease use 1 or 2! Exiting ..."
-				exit 0
-				;;
-		esac
+		echo "omv-sensor.conf exists - What to do?"
+		echo "Note: If you install the default file, your existing changes will be backed up."
+		select OMV_SENSOROVERWRITE in "Install Default File" "Retain Current File"; do
+			case $OMV_SENSOROVERWRITE in
+				"Install Default File" )
+					echo "making backup of omv-sensor.conf ... "
+					cp /etc/omv-sensor.conf /etc/omv-sensor.conf_bak  > /dev/null 2>&1
+					f_checksuccess
+					echo "omv-sensor.conf >>> /etc ... "
+					cp omv-sensor.conf /etc > /dev/null 2>&1
+					f_checksuccess
+					break;;
+				"Retain Current File")
+					echo -e "omv-sensor.conf is not updated"
+					break;;
+			esac
+		done
 	else
-		echo -ne "\n\nomv-sensor.conf >>> /etc ... "
+		echo "omv-sensor.conf >>> /etc ..."
 		cp omv-sensor.conf /etc > /dev/null 2>&1
 		f_checksuccess
 	fi
@@ -223,13 +218,13 @@ f_remove() {
 	else
 		echo -ne "\n/var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/HDDTemp.default not found!"
 	fi
-	
+
 	if [ -f /var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/Fanspeed.js ]; then
 		echo -ne "removing /var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/Fanspeed.js ... "
 		rm  /var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/Fanspeed.js > /dev/null 2>&1
 		f_checksuccess
 	fi
-			
+
 	if [ -f /var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/Sensors.js ]; then
 		echo -ne "removing /var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/Sensors.js ... "
 		rm  /var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/Sensors.js > /dev/null 2>&1
@@ -261,26 +256,19 @@ cat <<EOF
 
 EOF
 
-echo -e "\nSensors-script Installation / Remove in OMV?\n"
-echo "1 - install"
-echo "2 - remove"
-echo -n "-> "
-read -n 1 OMV_SENSOR_INST_REM
-case $OMV_SENSOR_INST_REM in
-	1)
+echo "Sensors-script Installation / Remove in OMV?"
+select OMV_SENSOR_INST_REM in "Install" "Remove"; do
+	case $OMV_SENSOR_INST_REM in
+	Install )
 		echo
 		echo
 		f_install
-		;;
-	2)
+		break;;
+	Remove )
 		echo
 		echo
 		f_remove
-		;;
-	*)
-		echo "\n\nPlease use 1 or 2 only! Exiting ..."
-		exit 0
-		;;
-esac
-
+		break;;
+	esac
+done
 exit 0
