@@ -1,12 +1,8 @@
 /**
  * Sensors plugin for system information.
  */
-// require("js/omv/NavigationPanel.js")
-// require("js/omv/PluginMgr.js")
-// require("js/omv/data/DataProxy.js")
-// require("js/omv/data/Store.js")
-// require("js/omv/grid/TBarGridPanel.js")
-// require("js/omv/RrdGraphPanel.js")
+// require("js/omv/PluginManager.js")
+// require("js/omv/workspace/panel/RrdGraph.js")
 
 Ext.ns("OMV.Module.Diagnostics.SysInfo");
 
