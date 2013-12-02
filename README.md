@@ -7,10 +7,14 @@ OMV-script for easy setup of sensors (CPU Temperature, Fanspeed, and HDD Tempera
 #Requirements:
 
 Based on Solo0815's instructions:
-http://forums.openmediavault.org/viewtopic.php?f=13&t=79&p=7459#p7459<br/>
-http://forums.openmediavault.org/viewtopic.php?f=13&t=79&start=60#p7374
+* http://forums.openmediavault.org/viewtopic.php?f=13&t=79&p=7459#p7459<br/>
+* http://forums.openmediavault.org/viewtopic.php?f=13&t=79&start=60#p7374
 
-Do the following as root or sudo the commands:
+__Note__: Please run your current install-remove script to delete any existing version of omvsensors before using this version, otherwise you risk leaving random files in places that could cause conflict. You may also need to delete Temperature.js, which can be done with:<br/>
+`rm /var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/Temperature.js`
+
+
+__Note__: Do the following as root or sudo the commands:
 
 1. Install lm-sensors in OpenMediaVault: `apt-get install lm-sensors`
 
