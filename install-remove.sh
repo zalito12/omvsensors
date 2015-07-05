@@ -80,7 +80,11 @@ f_install() {
 	f_checksuccess
 
 	echo -n "Sensors.default >>> /var/www/openmediavault/js/omv/module/admin ... "
-	cp Sensors.default /var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/ > /dev/null 2>&1
+	cp Sensors.default /var/www/openmediavault/js/omv/module/admin/diagnostic/system/ > /dev/null 2>&1
+	f_checksuccess
+  
+	echo -n "Temps.default >>> /var/www/openmediavault/js/omv/module/admin ... "
+	cp Temps.default /var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/ > /dev/null 2>&1
 	f_checksuccess
 
 	echo -n "Fanspeed.default /var/www/openmediavault/js/omv/module/admin ... "
@@ -202,12 +206,20 @@ f_remove() {
 		echo "/usr/share/openmediavault/mkconf/collectd.d/sensors not found!"
 	fi
 
-	if [ -f /var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/Sensors.default ]; then
-		echo -n "removing /var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/Sensors.default ... "
-		rm  /var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/Sensors.default > /dev/null 2>&1
+	if [ -f /var/www/openmediavault/js/omv/module/admin/diagnostic/system/Sensors.default ]; then
+		echo -n "removing /var/www/openmediavault/js/omv/module/admin/diagnostic/system/Sensors.default ... "
+		rm  /var/www/openmediavault/js/omv/module/admin/diagnostic/system/Sensors.default > /dev/null 2>&1
 		f_checksuccess
 	else
-		echo "/var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/Sensors.default not found!"
+		echo "/var/www/openmediavault/js/omv/module/admin/diagnostic/system/Sensors.default not found!"
+	fi
+
+	if [ -f /var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/Temps.default ]; then
+		echo -n "removing /var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/Temps.default ... "
+		rm  /var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/Temps.default > /dev/null 2>&1
+		f_checksuccess
+	else
+		echo "/var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/Temps.default not found!"
 	fi
 
 	if [ -f /var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/Fanspeed.default ]; then

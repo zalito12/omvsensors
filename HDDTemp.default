@@ -32,13 +32,8 @@
 
 Ext.define("OMV.module.admin.diagnostic.system.plugin.HDDTemp", {
         extend: "OMV.workspace.panel.RrdGraph",
+        alias: "omv.plugin.diagnostic.sensors.hddtemp",
 
+        title: _("HDD Temps"),
         rrdGraphName: "hddtemp"
-});
-
-OMV.PluginManager.register({
-        ptype: "diagnostic",
-        id: "system",
-        text: _("HDD Temps"),
-        className: "OMV.module.admin.diagnostic.system.plugin.HDDTemp"
 });

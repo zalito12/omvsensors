@@ -27,7 +27,8 @@ set -e
 OMV_COLLECTD_CONFIG=${OMV_COLLECTD_CONFIG:-"/etc/collectd/collectd.conf"}
 OMV_COLLECTD_RRDTOOL_MKGRAPH=${OMV_COLLECTD_RRDTOOL_MKGRAPH:-"/usr/sbin/omv-mkgraph"}
 #Mahmoud <mahmud1@hotmail.com> Oct 2013: Following line fixed to meet OMV 0.5
-OMV_JSFILE_CONFIGDIR="/var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin"
+OMV_JSFILE_BASEDIR="/var/www/openmediavault/js/omv/module/admin/diagnostic/system"
+OMV_JSFILE_PLUGINDIR="/var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin"
 
 # simple log-function
 _log() {
@@ -352,14 +353,17 @@ EOF
 ######################################################################
 
 # Remove existing js-files, they are newly created later
-if [ -f "$OMV_JSFILE_CONFIGDIR/Fanspeed.js" ]; then
-	rm "$OMV_JSFILE_CONFIGDIR/Fanspeed.js" > /dev/null 2>&1
+if [ -f "$OMV_JSFILE_BASEDIR/Sensors.js" ]; then
+	rm "$OMV_JSFILE_BASEDIR/Sensors.js" > /dev/null 2>&1
 fi
-if [ -f "$OMV_JSFILE_CONFIGDIR/Sensors.js" ]; then
-	rm "$OMV_JSFILE_CONFIGDIR/Sensors.js" > /dev/null 2>&1
+if [ -f "$OMV_JSFILE_PLUGINDIR/Fanspeed.js" ]; then
+	rm "$OMV_JSFILE_PLUGINDIR/Fanspeed.js" > /dev/null 2>&1
 fi
-if [ -f "$OMV_JSFILE_CONFIGDIR/HDDTemp.js" ]; then
-	rm "$OMV_JSFILE_CONFIGDIR/HDDTemp.js" > /dev/null 2>&1
+if [ -f "$OMV_JSFILE_PLUGINDIR/Temps.js" ]; then
+	rm "$OMV_JSFILE_PLUGINDIR/Temps.js" > /dev/null 2>&1
+fi
+if [ -f "$OMV_JSFILE_PLUGINDIR/HDDTemp.js" ]; then
+	rm "$OMV_JSFILE_PLUGINDIR/HDDTemp.js" > /dev/null 2>&1
 fi
 
 sed -i /LoadPlugin\ sensors/d ${OMV_COLLECTD_CONFIG} 2> /dev/null
@@ -401,8 +405,8 @@ fi
 			_log "WARN: Setting pluginconf to 1 - one sensor, no fanspeed"
 			pluginconf="1"; }
 
-[[ -f /var/lib/collectd/rrd/localhost/$SENSOR1 ]] || {
-	_log "WARN: given rrd-file in /var/lib/collectd/rrd/localhost for SENSOR1 does not exist"
+[[ -f /var/lib/rrdcached/db/localhost/$SENSOR1 ]] || {
+	_log "WARN: given rrd-file in /var/lib/rrdcached/db/localhost for SENSOR1 does not exist"
 	_log "WARN: You set it to $SENSOR1"
 	_log "WARN: Pleast check your config-file"
 	_log "WARN: exiting script ..."
@@ -411,8 +415,8 @@ fi
 	}
 
 if [ ! -z "$SENSOR2" ]; then
-	[[ -f /var/lib/collectd/rrd/localhost/$SENSOR2 ]] || {
-	_log "WARN: given rrd-file in /var/lib/collectd/rrd/localhost for SENSOR2 does not exist"
+	[[ -f /var/lib/rrdcached/db/localhost/$SENSOR2 ]] || {
+	_log "WARN: given rrd-file in /var/lib/rrdcached/db/localhost for SENSOR2 does not exist"
 	_log "WARN: You set it to $SENSOR2"
 	_log "WARN: Pleast check your config-file"
 	_log "WARN: exiting script ..."
@@ -422,8 +426,8 @@ if [ ! -z "$SENSOR2" ]; then
 fi
 
 if [ ! -z "$FANSPEED" ]; then
-	[[ -f /var/lib/collectd/rrd/localhost/$FANSPEED ]] || {
-	_log "WARN: given rrd-file in /var/lib/collectd/rrd/localhost for FANSPEED does not exist"
+	[[ -f /var/lib/rrdcached/db/localhost/$FANSPEED ]] || {
+	_log "WARN: given rrd-file in /var/lib/rrdcached/db/localhost for FANSPEED does not exist"
 	_log "WARN: You set it to $FANSPEED"
 	_log "WARN: Pleast check your config-file"
 	_log "WARN: exiting script ..."
@@ -432,11 +436,14 @@ if [ ! -z "$FANSPEED" ]; then
 	}
 fi
 
+#copy base tab file
+cp "$OMV_JSFILE_BASEDIR/Sensors.default" "$OMV_JSFILE_BASEDIR/Sensors.js"
+
 # Which configuration is selected?
 case $pluginconf in
 	1)
 		echo "# config: 1 = one sensor, no fanspeed" >> ${OMV_COLLECTD_RRDTOOL_MKGRAPH}
-		cp "$OMV_JSFILE_CONFIGDIR/Sensors.default" "$OMV_JSFILE_CONFIGDIR/Sensors.js"
+		cp "$OMV_JSFILE_PLUGINDIR/Sensors.default" "$OMV_JSFILE_PLUGINDIR/Temps.js"
 		f_plugin_sensors_header
 		f_one_sensorrrd
 		;;
@@ -446,14 +453,14 @@ case $pluginconf in
 			_log "WARN: SENSOR2 not defined - exiting"
 			
 		else
-			cp "$OMV_JSFILE_CONFIGDIR/Sensors.default" "$OMV_JSFILE_CONFIGDIR/Sensors.js"
+			cp "$OMV_JSFILE_PLUGINDIR/Sensors.default" "$OMV_JSFILE_PLUGINDIR/Temps.js"
 			f_plugin_sensors_header
 			f_two_sensorsrrd
 		fi
 		;;
 	3)
 		echo "# config: 3 = one sensor and fanspeed" >> ${OMV_COLLECTD_RRDTOOL_MKGRAPH}
-		cp "$OMV_JSFILE_CONFIGDIR/Sensors.default" "$OMV_JSFILE_CONFIGDIR/Sensors.js"
+		cp "$OMV_JSFILE_PLUGINDIR/Sensors.default" "$OMV_JSFILE_PLUGINDIR/Temps.js"
 		f_plugin_sensors_header
 		f_one_sensorrrd
 
@@ -461,7 +468,7 @@ case $pluginconf in
 			_log "WARN: FANSPEED not defined - exiting"
 			echo "# FANSPEED not defined - exiting" >> ${OMV_COLLECTD_RRDTOOL_MKGRAPH}
 		else
-			cp "$OMV_JSFILE_CONFIGDIR/Fanspeed.default" "$OMV_JSFILE_CONFIGDIR/Fanspeed.js"
+			cp "$OMV_JSFILE_PLUGINDIR/Fanspeed.default" "$OMV_JSFILE_PLUGINDIR/Fanspeed.js"
 			f_plugin_fanspeed_header
 			f_fanspeedrrd
 		fi
@@ -472,7 +479,7 @@ case $pluginconf in
 			_log "WARN: SENSOR2 not defined - exiting"
 			echo "# SENSOR2 not defined - exiting" >> ${OMV_COLLECTD_RRDTOOL_MKGRAPH}
 		else
-			cp "$OMV_JSFILE_CONFIGDIR/Sensors.default" "$OMV_JSFILE_CONFIGDIR/Sensors.js"
+			cp "$OMV_JSFILE_PLUGINDIR/Sensors.default" "$OMV_JSFILE_PLUGINDIR/Temps.js"
 			
 			f_plugin_sensors_header
 			f_two_sensorsrrd
@@ -482,7 +489,7 @@ case $pluginconf in
 			_log "WARN: FANSPEED not defined - exiting"
 			echo "# FANSPEED not defined - exiting" >> ${OMV_COLLECTD_RRDTOOL_MKGRAPH}
 		else
-			cp "$OMV_JSFILE_CONFIGDIR/Fanspeed.default" "$OMV_JSFILE_CONFIGDIR/Fanspeed.js"
+			cp "$OMV_JSFILE_PLUGINDIR/Fanspeed.default" "$OMV_JSFILE_PLUGINDIR/Fanspeed.js"
 			f_plugin_fanspeed_header
 			f_fanspeedrrd
 		fi
@@ -504,8 +511,8 @@ if (( "$NUM_HDD" > 0 )); then
 	for i in $(seq 1 $NUM_HDD); do
 		eval HDD_SENSOR="\${HDD${i}}"
 		if [ ! -z "$HDD_SENSOR_NAME" ]; then
-			[[ -f /var/lib/collectd/rrd/localhost/$HDD_SENSOR ]] || {
-				_log "WARN: given rrd-file in /var/lib/collectd/rrd/localhost for HDD${i} does not exist"
+			[[ -f /var/lib/rrdcached/db/localhost/$HDD_SENSOR ]] || {
+				_log "WARN: given rrd-file in /var/lib/rrdcached/db/localhost for HDD${i} does not exist"
 				eval _log "WARN: You set it to \${HDD${i}}"
 				_log "WARN: Pleast check your config-file"
 				_log "WARN: exiting script ..."
@@ -514,7 +521,7 @@ if (( "$NUM_HDD" > 0 )); then
 			}
 		fi
 	done
-	cp "$OMV_JSFILE_CONFIGDIR/HDDTemp.default" "$OMV_JSFILE_CONFIGDIR/HDDTemp.js"
+	cp "$OMV_JSFILE_PLUGINDIR/HDDTemp.default" "$OMV_JSFILE_PLUGINDIR/HDDTemp.js"
 
 	f_plugin_hddtemp_header
 	f_hdd_sensorsrrd
