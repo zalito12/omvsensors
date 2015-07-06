@@ -9,5 +9,5 @@ Ext.define("OMV.module.admin.diagnostic.system.plugin.Temps", {
         alias: "omv.plugin.diagnostic.sensors.temps",
 
         title: _("Temperatures"),
-        rrdGraphName: "temps"
+        rrdGraphName: "sensors"
 });

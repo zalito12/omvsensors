@@ -15,7 +15,9 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
-
+ * You should have received a copy of the GNU General Public License
+ * along with OpenMediaVault. If not, see <http://www.gnu.org/licenses/>.
+ */
 // require("js/omv/WorkspaceManager.js")
 // require("js/omv/workspace/tab/Panel.js")
 
@@ -24,33 +26,32 @@
  * @derived OMV.workspace.tab.Panel
  */
 Ext.define("OMV.module.admin.diagnostic.system.Sensors", {
-        extend: "OMV.workspace.tab.Panel",
-        requires: [
-                "Ext.ClassManager"
-        ],
+	extend: "OMV.workspace.tab.Panel",
+	requires: [
+		"Ext.ClassManager"
+	],
 
-        initComponent: function() {
-                var me = this;
-                // Get the registered plugins and initialize them.
-                var classes = Ext.ClassManager.getNamesByExpression(
-                  "omv.plugin.diagnostic.sensors.*");
-                me.items = [];
-                Ext.Array.each(classes, function(name) {
-                        me.items.push(Ext.create(name));
-                });
-
-                // Sort the tabs by their title.
-                Ext.Array.sort(me.items, function(a, b) {
-                        return a.title > b.title ? 1 : (a.title < b.title ? -1 $
-                });
-                me.callParent(arguments);
-        }
+	initComponent: function() {
+		var me = this;
+		// Get the registered plugins and initialize them.
+		var classes = Ext.ClassManager.getNamesByExpression(
+		  "omv.plugin.diagnostic.sensors.*");
+		me.items = [];
+		Ext.Array.each(classes, function(name) {
+			me.items.push(Ext.create(name));
+		});
+		// Sort the tabs by their title.
+		Ext.Array.sort(me.items, function(a, b) {
+			return a.title > b.title ? 1 : (a.title < b.title ? -1 : 0);
+		});
+		me.callParent(arguments);
+	}
 });
 
 OMV.WorkspaceManager.registerPanel({
-        id: "sensors",
-        path: "/diagnostic/system",
-        text: _("Sensors statics"),
-        position: 30,
-        className: "OMV.module.admin.diagnostic.system.Sensors"
+	id: "sensors",
+	path: "/diagnostic/system",
+	text: _("Sensors"),
+	position: 35,
+	className: "OMV.module.admin.diagnostic.system.Sensors"
 });
