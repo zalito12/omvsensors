@@ -238,15 +238,21 @@ f_remove() {
 		echo "/var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/HDDTemp.default not found!"
 	fi
 
+	if [ -f /var/www/openmediavault/js/omv/module/admin/diagnostic/system/Sensors.js ]; then
+		echo -n "removing /var/www/openmediavault/js/omv/module/admin/diagnostic/system/Sensors.js ... "
+		rm  /var/www/openmediavault/js/omv/module/admin/diagnostic/system/Sensors.js > /dev/null 2>&1
+		f_checksuccess
+	fi
+
 	if [ -f /var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/Fanspeed.js ]; then
 		echo -n "removing /var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/Fanspeed.js ... "
 		rm  /var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/Fanspeed.js > /dev/null 2>&1
 		f_checksuccess
 	fi
-
-	if [ -f /var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/Sensors.js ]; then
-		echo -n "removing /var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/Sensors.js ... "
-		rm  /var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/Sensors.js > /dev/null 2>&1
+     
+	if [ -f /var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/Temps.js ]; then
+		echo -n "removing /var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/Temps.js ... "
+		rm  /var/www/openmediavault/js/omv/module/admin/diagnostic/system/plugin/Temps.js > /dev/null 2>&1
 		f_checksuccess
 	fi
 
