@@ -88,7 +88,10 @@ cd omvsensors-master
 
 The script will lead you through the installation (and if removal) process.
 
-Edit '/etc/omv-sensor.conf' to fit your needs, then run:
+Edit '/etc/omv-sensor.conf' to fit your needs. Be careful choosing your temp files. 
+In my case I have 3 core temp files, physical, core0, core1 and the core1 file is temp3 rrd.
+ 
+Then run:
 ```
 /usr/share/openmediavault/mkconf/collectd.d/sensors
 ```
