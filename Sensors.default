@@ -51,7 +51,7 @@ Ext.define("OMV.module.admin.diagnostic.system.Sensors", {
 OMV.WorkspaceManager.registerPanel({
 	id: "sensors",
 	path: "/diagnostic/system",
-	text: _("Sensors"),
+	text: _("Sensors statistics"),
 	position: 35,
 	className: "OMV.module.admin.diagnostic.system.Sensors"
 });
