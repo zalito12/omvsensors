@@ -443,7 +443,7 @@ cp "$OMV_JSFILE_BASEDIR/Sensors.default" "$OMV_JSFILE_BASEDIR/Sensors.js"
 case $pluginconf in
 	1)
 		echo "# config: 1 = one sensor, no fanspeed" >> ${OMV_COLLECTD_RRDTOOL_MKGRAPH}
-		cp "$OMV_JSFILE_PLUGINDIR/Sensors.default" "$OMV_JSFILE_PLUGINDIR/Temps.js"
+		cp "$OMV_JSFILE_PLUGINDIR/Temps.default" "$OMV_JSFILE_PLUGINDIR/Temps.js"
 		f_plugin_sensors_header
 		f_one_sensorrrd
 		;;
@@ -453,14 +453,14 @@ case $pluginconf in
 			_log "WARN: SENSOR2 not defined - exiting"
 			
 		else
-			cp "$OMV_JSFILE_PLUGINDIR/Sensors.default" "$OMV_JSFILE_PLUGINDIR/Temps.js"
+			cp "$OMV_JSFILE_PLUGINDIR/Temps.default" "$OMV_JSFILE_PLUGINDIR/Temps.js"
 			f_plugin_sensors_header
 			f_two_sensorsrrd
 		fi
 		;;
 	3)
 		echo "# config: 3 = one sensor and fanspeed" >> ${OMV_COLLECTD_RRDTOOL_MKGRAPH}
-		cp "$OMV_JSFILE_PLUGINDIR/Sensors.default" "$OMV_JSFILE_PLUGINDIR/Temps.js"
+		cp "$OMV_JSFILE_PLUGINDIR/Temps.default" "$OMV_JSFILE_PLUGINDIR/Temps.js"
 		f_plugin_sensors_header
 		f_one_sensorrrd
 
@@ -479,7 +479,7 @@ case $pluginconf in
 			_log "WARN: SENSOR2 not defined - exiting"
 			echo "# SENSOR2 not defined - exiting" >> ${OMV_COLLECTD_RRDTOOL_MKGRAPH}
 		else
-			cp "$OMV_JSFILE_PLUGINDIR/Sensors.default" "$OMV_JSFILE_PLUGINDIR/Temps.js"
+			cp "$OMV_JSFILE_PLUGINDIR/Temps.default" "$OMV_JSFILE_PLUGINDIR/Temps.js"
 			
 			f_plugin_sensors_header
 			f_two_sensorsrrd
